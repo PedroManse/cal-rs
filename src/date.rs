@@ -109,22 +109,35 @@ impl Month {
 
 #[derive(Debug)]
 pub struct Date {
-    year: Year,
-    month: Month,
-    day: u32,
-    date: NaiveDate,
+    pub year: Year,
+    pub month: Month,
+    pub day: u32,
+    pub date: NaiveDate,
+    pub first_of_month: NaiveDate,
 }
 
-use chrono::{NaiveDate, Datelike, Local};
+use chrono::{Datelike, Local, NaiveDate};
 impl Date {
+    pub fn gather_important(&self) -> Vec<(u32, &str)> {
+        vec![
+            (3, "dia 3"),
+            (5, "dia 5"),
+            (6, "dia 6!!"),
+        ]
+    }
     pub fn now() -> Result<Date, CalError> {
         let date = Local::now().date_naive();
         let year = Year(date.year());
         let month = date.month().try_into()?;
         let day = date.day();
-        Ok(Date{
-         year,month,day,date
+        let first = NaiveDate::from_ymd_opt(date.year(), date.month(), 1)
+            .ok_or(CalError::FirstDayError)?;
+        Ok(Date {
+            year,
+            month,
+            day,
+            date,
+            first_of_month: first,
         })
     }
 }
-

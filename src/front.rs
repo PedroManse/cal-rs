@@ -23,12 +23,12 @@ impl back::Event {
                 month: _,
                 day: d,
                 description,
-            } => write!(f, "{d}: {}", description),
+            } => writeln!(f, "{d} | {}", description),
             back::Event::Yearly {
                 months: _,
                 day: d,
                 description,
-            } => write!(f, "{d}: {}", description),
+            } => writeln!(f, "{d} | {}", description),
             back::Event::YearlyByWeekday {
                 months: _,
                 days,
@@ -39,7 +39,7 @@ impl back::Event {
                     .map(|w| ctx.weekday_string(w))
                     .collect::<Vec<_>>()
                     .join(", ");
-                write!(f, "{ws}: {}", description)
+                writeln!(f, "{ws} | {}", description)
             }
         }
     }
@@ -86,15 +86,15 @@ impl fmt::Display for back::Date {
         // this month
         let this_month_count = self.month.day_count(&self.year);
         let mut events: Vec<&back::Event> = Vec::new();
-        //let days_check: Vec<u32> = days.iter().map(|(day, _name)| *day).collect();
         for day in 1..=this_month_count {
             dtot += 1;
             if self.day == day {
                 let mut today_events = self.get_events(day);
+                let day_str = format!("[{day}]");
                 if !today_events.is_empty() {
-                    calendar.push_str(&cformat!("<g!>[{day: >2}]</>"));
+                    calendar.push_str(&cformat!("<g!>{day_str: >4}</>"));
                 } else {
-                    calendar.push_str(&cformat!("<w!>[{day: >2}]</>"));
+                    calendar.push_str(&cformat!("<w!>{day_str: >4}</>"));
                 }
                 events.append(&mut today_events);
             } else {
@@ -104,7 +104,6 @@ impl fmt::Display for back::Date {
                 } else {
                     calendar.push_str(&cformat!(" <w>{day: >2}</> "));
                 }
-                //events.append(&mut today_events);
             }
             if dtot % 7 == 0 {
                 calendar.push('\n');

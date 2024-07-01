@@ -181,7 +181,7 @@ pub struct Date {
 fn get_user_file() -> Result<std::ffi::OsString, CalError> {
     std::env::var_os("CAL_RS_USERFILE")
         .or(std::env::var_os("HOME").map(|mut h| {
-            h.push("/.config/cal-rs.toml".to_owned());
+            h.push("/.config/cal-rs.toml");
             h
         }))
         .ok_or(CalError::UserFileNotFound)
@@ -213,7 +213,7 @@ impl Date {
                         && days
                             .iter()
                             .map(<u32 as From<&Weekday>>::from)
-                            .any(|wk: u32| wk == ((5 + check_day) % 7))
+                            .any(|wk: u32| wk == check_day % 7)
                 }
             })
             .collect()
